@@ -1,4 +1,4 @@
-# EmergencyRiskClassificationWithHeapQueuePriority
+# EmergencyRiskClassificationWithHeapPriorityQueue
 A Manchester Triage System (MTS)'s Implementation of a Heap Priority Queue
 
 The reception of the patient in the emergency service must be performed by a risk classification protocol,
