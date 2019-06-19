@@ -118,35 +118,41 @@ void insere_fp(p_fp fprio, Paciente paciente)
 {
     paciente.chave++;                                       //chave autoincrementada
     paciente.chave = verifica_cor(paciente.cor,paciente.chave);     //verifica no item que cor a chave é
-    fprio->v[fprio->n] = paciente;                          //insere no final da fila                 
+    fprio->v[fprio->n] = paciente;                          //insere no final da fila   
+    fprio->n++;                                             //incrementa o contador              
     sobe_no_heap(fprio, fprio->n - 1);
-    fprio->n++;                                             //incrementa o contador
+    
 }
 
-char remove_fp(p_fp fprio) {
+int remove_fp(p_fp fprio) 
+{
 
-    if (fprio->n == 0) {
-        perror("Fila está vazia");
+    if (fprio->n == 0) 
+    {
+        perror("Fila esta vazia : ");
         return -1;
     }
-
-
-    char *nome = (fprio->v->nome); //nome é char* e não FP
 
     troca(&(fprio->v[0]), &(fprio->v[fprio->n - 1]));
     fprio->n--;
     desce_no_heap(fprio, 0);
-    return nome;
+    return fprio->v->chave;
 }
 
 
-void mostra_fp(p_fp fprio){
-    puts("Fp =[ ");
+void mostra_fp(p_fp fprio)
+{
+    printf("Fp =[ ");
     for(int i=0;i<fprio->n;i++)
     {
-        printf("K:%d C:%d",fprio->v[i].chave,fprio->v[i].cor);     
+        printf("K:%d C:%d ",fprio->v[i].chave,fprio->v[i].cor);     
     }
     puts(" ]");
+}
+
+void mostrar_k(Paciente paciente)
+{
+     printf("K:%d C:%d",paciente.chave,paciente.cor);
 }
 
 
@@ -159,7 +165,7 @@ void free_memo_fp(p_fp fprio)
 
 void menu(p_fp fp, Paciente paciente){
     int k;
-    puts("Menu");
+    puts("\nMenu");
     puts("1- Cad Pacientes");
     puts("2- Mostrar Prox da Fila");
     puts("3- Mostrar Fila");
@@ -168,20 +174,23 @@ void menu(p_fp fp, Paciente paciente){
     switch (k)
     {
     case 1:
-        printf("Nome do Paciente: ");
+        printf("\nNome do Paciente: ");
         scanf("%s",&paciente.nome);
         printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
         printf("Opcao de Cor: ");
         scanf("%d",&paciente.cor);
         insere_fp(fp,paciente);
+        mostrar_k(paciente);
         menu(fp,paciente);
         break;
     case 2:
         puts("mostrar proximo da fila: ");
-        printf("%s",remove_fp(fp));
+        printf("%d \n",remove_fp(fp));
         menu(fp,paciente);
         break;
     case 3:
+        mostra_fp(fp);
+        menu(fp,paciente);
         break;
     case 4:
         break;
@@ -197,9 +206,9 @@ int main ()
     p_fp fp = criar_filaprio(10);
     Paciente paciente;
     paciente.chave = 0;
+    menu(fp, paciente);
 
     
-
    
 
    // Desaloca a fila de prioridade
