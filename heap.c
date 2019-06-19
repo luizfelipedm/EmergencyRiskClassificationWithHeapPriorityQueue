@@ -131,7 +131,7 @@ char remove_fp(p_fp fprio) {
     }
 
 
-    char nome[20] = (fprio->v);
+    char *nome = (fprio->v->nome); //nome é char* e não FP
 
     troca(&(fprio->v[0]), &(fprio->v[fprio->n - 1]));
     fprio->n--;
