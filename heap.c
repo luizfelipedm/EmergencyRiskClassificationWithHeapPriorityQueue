@@ -13,12 +13,12 @@ typedef struct
     char nome[20];                          //dado do item
     int cor;
     int chave;                              //chave do item
-} Item;
+} Paciente;
 
 
 typedef struct
 {
-    Item *v;                                // ponteiro para Item[dado,chave]
+    Paciente *v;                                // ponteiro para Item[dado,chave]
     int n, tamanho;                         // inteiros contador de Items(n) e o tamanho da estrutura alocada dinamicamente
 }FP;
 
@@ -29,16 +29,16 @@ typedef FP *p_fp;                          // ponteiro pra FP{n,tamanho, *Item[d
 p_fp criar_filaprio(int tam) 
  {
     p_fp fprio = malloc(sizeof(FP));        // aloca um ponteiro pra FP de tamanho (FP)
-    fprio->v = malloc(tam * sizeof(Item));  // aloca um ponteiro para Item[dado,chave] dentro do FP
+    fprio->v = malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Item[dado,chave] dentro do FP
     fprio->n = 0;                           // inicializa contador n
     fprio->tamanho = tam;                   //define o tamanho da fila
     return fprio;                           //retorna a fila
  }
 
 
-void troca(Item *x, Item *y)  // Faz a troca de dois ponteiros
+void troca(Paciente *x, Paciente *y)  // Faz a troca de dois ponteiros
 {
-    Item z = *x;
+    Paciente z = *x;
     *x = *y;
     *y = z;
 }
@@ -70,13 +70,13 @@ void desce_no_heap(p_fp fprio, int x)
     }
 }
 
-Item extrai_maximo(p_fp fprio) 
+Paciente extrai_maximo(p_fp fprio) 
 {
-    Item item = fprio->v[0];
+    Paciente paciente = fprio->v[0];
     troca(&(fprio->v[0]), &(fprio->v[fprio->n - 1]));
     fprio->n--;
     desce_no_heap(fprio, 0);
-    return item;
+    return paciente;
 }
 
 
@@ -114,14 +114,31 @@ int verifica_cor(int cor, int k)
 
 
 
-void insere_fp(p_fp fprio, Item item) 
+void insere_fp(p_fp fprio, Paciente paciente) 
 {
-    item.chave++;                                       //chave autoincrementada
-    item.chave = verifica_cor(item.cor,item.chave);     //verifica no item que cor a chave é
-    fprio->v[fprio->n] = item;                          //insere no final da fila
-    fprio->n++;                                         //incrementa o contador
+    paciente.chave++;                                       //chave autoincrementada
+    paciente.chave = verifica_cor(paciente.cor,paciente.chave);     //verifica no item que cor a chave é
+    fprio->v[fprio->n] = paciente;                          //insere no final da fila                 
     sobe_no_heap(fprio, fprio->n - 1);
+    fprio->n++;                                             //incrementa o contador
 }
+
+char remove_fp(p_fp fprio) {
+
+    if (fprio->n == 0) {
+        perror("Fila está vazia");
+        return -1;
+    }
+
+
+    char nome[20] = (fprio->v);
+
+    troca(&(fprio->v[0]), &(fprio->v[fprio->n - 1]));
+    fprio->n--;
+    desce_no_heap(fprio, 0);
+    return nome;
+}
+
 
 void mostra_fp(p_fp fprio){
     puts("Fp =[ ");
@@ -140,28 +157,48 @@ void free_memo_fp(p_fp fprio)
     free(fprio);
 }
 
+void menu(p_fp fp, Paciente paciente){
+    int k;
+    puts("Menu");
+    puts("1- Cad Pacientes");
+    puts("2- Mostrar Prox da Fila");
+    puts("3- Mostrar Fila");
+    puts("Pressione qualquer numero para encerrar...");
+    scanf("%d",&k);
+    switch (k)
+    {
+    case 1:
+        printf("Nome do Paciente: ");
+        scanf("%s",&paciente.nome);
+        printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
+        printf("Opcao de Cor: ");
+        scanf("%d",&paciente.cor);
+        insere_fp(fp,paciente);
+        menu(fp,paciente);
+        break;
+    case 2:
+        puts("mostrar proximo da fila: ");
+        printf("%s",remove_fp(fp));
+        menu(fp,paciente);
+        break;
+    case 3:
+        break;
+    case 4:
+        break;
+    default:
+        break;
+    }
+}
+
 
 int main ()
 {
     
     p_fp fp = criar_filaprio(10);
-    Item item;
-    item.chave = 0;
-    
-    
-    printf("Nome do Paciente: ");
-    scanf("%s",&item.nome);
-    printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
-    printf("Opcao de Cor: ");
-    scanf("%d",&item.cor);
-    insere_fp(fp,item);
+    Paciente paciente;
+    paciente.chave = 0;
 
-    printf("Nome do Paciente: ");
-    scanf("%s",&item.nome);
-    printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
-    printf("Opcao de Cor: ");
-    scanf("%d",&item.cor);
-    insere_fp(fp,item);
+    
 
    
 
