@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define PAI(i) ((i-1)/2)		    //Pai de i é i-1 divido por 2
+#define PAI(i) ((i-1)/2)		    //Pai de i ï¿½ i-1 divido por 2
 #define F_ESQ(i) (2*i+1)                    //Filho esquerdo de i
 #define F_DIR(i) (2*i+2)                    //Filho direito de i
 
@@ -142,7 +142,7 @@ int cor_atendimento(int x)
     switch (x)
     {
     case 1:
-        /* code */
+       
         break;
     
     default:
@@ -150,6 +150,7 @@ int cor_atendimento(int x)
     }
 return x;
 }
+
 */
 
 void free_memo_fp(p_fp fprio)
