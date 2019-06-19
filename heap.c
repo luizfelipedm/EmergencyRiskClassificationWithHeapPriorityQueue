@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
-#define PAI(i) ((i-1)/2)		    //Pai de i � i-1 divido por 2
+#define PAI(i) ((i-1)/2)		            //Pai de i er i-1 divido por 2
 #define F_ESQ(i) (2*i+1)                    //Filho esquerdo de i
 #define F_DIR(i) (2*i+2)                    //Filho direito de i
 
@@ -10,6 +11,7 @@
 typedef struct 
 {
     char nome[20];                          //dado do item
+    int cor;
     int chave;                              //chave do item
 } Item;
 
@@ -24,15 +26,15 @@ typedef FP * p_fp;                          // ponteiro pra FP{n,tamanho, *Item[
 
 
 
-
 p_fp criar_filaprio(int tam) 
  {
     p_fp fprio = malloc(sizeof(FP));        // aloca um ponteiro pra FP de tamanho (FP)
-    fprio->v = malloc(tam * sizeof(Item));        // aloca um ponteiro para Item[dado,chave] dentro do FP
+    fprio->v = malloc(tam * sizeof(Item));  // aloca um ponteiro para Item[dado,chave] dentro do FP
     fprio->n = 0;                           // inicializa contador n
     fprio->tamanho = tam;                   //define o tamanho da fila
     return fprio;                           //retorna a fila
  }
+
 
 void troca(Item *x, Item *y)  // Faz a troca de dois ponteiros
 {
@@ -91,67 +93,46 @@ void muda_prioridade(p_fp fprio, int k, int valor)
       }
 }
 
-void insere_fp(p_fp fprio, Item item) 
+int verifica_cor(int cor, int k)
 {
-    fprio->v[fprio->n] = item; //insere no final da fila
-    fprio->n++;                //incrementa o contador
-    sobe_no_heap(fprio, fprio->n - 1);
-}
-
-
-/* 
-void tabela_de_cores()
-{
-    
-    
-    strcpy(cor.nome, "azul");
-    cor.digcor = 1;
-    cor.ini_interval = 1;
-    cor.fim_interval = 99;
-    cor.tmp_atend = 240;        //240 min = 4 horas
-    insere_cor(cores,cor);
-
-    strcpy(cor.nome, "verde");
-    cor.digcor = 2;
-    cor.ini_interval = 100;
-    cor.fim_interval = 199;
-    cor.tmp_atend = 120;        //120 min = 2 horas
-    insere_cor(cores,cor);
-
-    strcpy(cor.nome, "amarelo");
-    cor.digcor = 3;
-    cor.ini_interval = 200;
-    cor.fim_interval = 299;
-    cor.tmp_atend = 60;         // 60 min = 1 hora
-    insere_cor(cores,cor);
-
-    strcpy(cor.nome, "laranja");
-    cor.digcor = 4;
-    cor.ini_interval = 300;
-    cor.fim_interval = 399;
-    cor.tmp_atend = 10;         //10 min
-    insere_cor(cores,cor);
-
-}
-
-*/
-
-/*
-int cor_atendimento(int x)
-{   
-    switch (x)
+    switch (cor)
     {
     case 1:
-       
+        k = k+1500; 
         break;
-    
+    case 2:
+        k = k+1000; 
+        break;
+    case 3:
+        k = k+500; 
+        break;     
     default:
         break;
     }
-return x;
+    return k;
 }
 
-*/
+
+
+void insere_fp(p_fp fprio, Item item) 
+{
+    item.chave++;                                       //chave autoincrementada
+    item.chave = verifica_cor(item.cor,item.chave);     //verifica no item que cor a chave é
+    fprio->v[fprio->n] = item;                          //insere no final da fila
+    fprio->n++;                                         //incrementa o contador
+    sobe_no_heap(fprio, fprio->n - 1);
+}
+
+void mostra_fp(p_fp fprio){
+    puts("Fp =[ ");
+    for(int i=0;i<fprio->n;i++)
+    {
+        printf("K:%d C:%d",fprio->v[i].chave,fprio->v[i].cor);     
+    }
+    puts(" ]");
+}
+
+
 
 void free_memo_fp(p_fp fprio)
 {
@@ -162,24 +143,31 @@ void free_memo_fp(p_fp fprio)
 
 int main ()
 {
-    int dig_cor;
-    Item item;
+    
     p_fp fp = criar_filaprio(10);
+    Item item;
+    item.chave = 0;
     
     
     printf("Nome do Paciente: ");
-    scanf("%s",item.nome);
+    scanf("%s",&item.nome);
     printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
     printf("Opcao de Cor: ");
-    scanf("%d",dig_cor);
-    //cor_atendimento(dig_cor);
+    scanf("%d",&item.cor);
+    insere_fp(fp,item);
 
-    free_memo_fp(fp);
-    
-    
+    printf("Nome do Paciente: ");
+    scanf("%s",&item.nome);
+    printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
+    printf("Opcao de Cor: ");
+    scanf("%d",&item.cor);
+    insere_fp(fp,item);
 
-    // item.chave = 1;
-    // insere_fp(fp,item);
+   
+
+   // Desaloca a fila de prioridade
+   free_memo_fp(fp);
+
 
 
    return 0;
