@@ -22,7 +22,7 @@ typedef struct
     int n, tamanho;                         // inteiros contador de Items(n) e o tamanho da estrutura alocada dinamicamente
 }FP;
 
-typedef FP * p_fp;                          // ponteiro pra FP{n,tamanho, *Item[dado,chave]}
+typedef FP *p_fp;                          // ponteiro pra FP{n,tamanho, *Item[dado,chave]}
 
 
 
