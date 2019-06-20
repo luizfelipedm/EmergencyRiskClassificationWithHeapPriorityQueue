@@ -28,12 +28,12 @@ typedef FP *p_fp;                          // ponteiro pra FP{n,tamanho, *Item[d
 
 p_fp criar_filaprio(int tam) 
  {
-    p_fp fprio = malloc(sizeof(FP));        // aloca um ponteiro pra FP de tamanho (FP)
+    p_fp fprio = malloc(sizeof(FP));            // aloca um ponteiro pra FP de tamanho (FP)
     fprio->v = malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Item[dado,chave] dentro do FP
-	fprio->v->chave = 0; //Inicializa a 1ra chave
-    fprio->n = 0;                           // inicializa contador n
-    fprio->tamanho = tam;                   //define o tamanho da fila
-    return fprio;                           //retorna a fila
+	fprio->v->chave = 0;                        //Inicializa a 1ra chave
+    fprio->n = 0;                               // inicializa contador n
+    fprio->tamanho = tam;                       //define o tamanho da fila
+    return fprio;                               //retorna a fila
  }
 
 
@@ -120,12 +120,14 @@ void mostrar_k(int x, int y)
      printf("K:%d C:%d",x,y);
 }
 
-void insere_fp(p_fp fprio, Paciente *paciente) 
+void insere_fp(p_fp fprio, Paciente paciente) 
 {   
     (fprio->v[fprio->n].chave)++;
-    fprio->v[fprio->n].chave = verifica_cor(fprio->v[fprio->n].cor, fprio->v[fprio->n].chave);     //verifica no item que cor a chave é
-    fprio->v[fprio->n] = *paciente;                                  //insere no final da fila   
-    (fprio->n)++;                                                     //incrementa o contador              
+    paciente.chave = verifica_cor(paciente.cor,
+                                            fprio->v[fprio->n].chave);  //verifica que cor a chave é
+    //fprio->v[fprio->n].chave += paciente.chave;
+    fprio->v[fprio->n] = paciente;                                      //insere no final da fila   
+    (fprio->n)++;                                                       //incrementa o contador              
     sobe_no_heap(fprio, fprio->n - 1);
     //mostrar_k((fprio->v[fprio->n]).chave,(fprio->v[fprio->n]).cor);
     
@@ -167,6 +169,8 @@ void free_memo_fp(p_fp fprio)
 
 
 void menu(p_fp fp){
+    Paciente paciente;
+    paciente.chave = 0;
     int k;
     puts("\nMenu");
     puts("1- Cad Pacientes");
@@ -178,12 +182,12 @@ void menu(p_fp fp){
     {
     case 1:
         printf("\nNome do Paciente: ");
-        scanf("%s",&fp->v[fp->n].nome);
+        scanf("%s",&paciente.nome);
 		fp->v[fp->n].chave = fp->n;
         printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
         printf("Opcao de Cor: ");
-        scanf("%d", &fp->v[fp->n].cor);
-        insere_fp(fp, &fp->v[fp->n]);
+        scanf("%d", &paciente.cor);
+        insere_fp(fp, paciente);
         menu(fp);
         break;
     case 2:
