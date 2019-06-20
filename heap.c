@@ -129,7 +129,7 @@ void insere_fp(p_fp fprio, Paciente paciente)
 }
 
 int remove_fp(p_fp fprio) 
-{
+{   
 
     if (fprio->n == 0) 
     {
