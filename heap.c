@@ -182,7 +182,7 @@ void menu(p_fp fp){
 		fp->v[fp->n].chave = fp->n;
         printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
         printf("Opcao de Cor: ");
-        scanf("%d", &fp->v[fp->n].chave);
+        scanf("%d", &fp->v[fp->n].cor);
         insere_fp(fp, &fp->v[fp->n]);
         menu(fp);
         break;
