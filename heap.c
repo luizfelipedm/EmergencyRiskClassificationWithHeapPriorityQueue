@@ -117,11 +117,11 @@ void mostrar_k(int x, int y)
      printf("K:%d C:%d",x,y);
 }
 
-void insere_fp(p_fp fprio, Paciente paciente) 
+void insere_fp(p_fp fprio, Paciente *paciente) 
 {   
     (fprio->v[fprio->n].chave)++;
     fprio->v[fprio->n].chave = verifica_cor(fprio->v[fprio->n].cor,fprio->v[fprio->n].chave);     //verifica no item que cor a chave é
-    fprio->v[fprio->n] = paciente;                                  //insere no final da fila   
+    fprio->v[fprio->n] = *paciente;                                  //insere no final da fila   
     fprio->n++;                                                     //incrementa o contador              
     sobe_no_heap(fprio, fprio->n - 1);
     //mostrar_k((fprio->v[fprio->n]).chave,(fprio->v[fprio->n]).cor);
@@ -129,7 +129,7 @@ void insere_fp(p_fp fprio, Paciente paciente)
 }
 
 int remove_fp(p_fp fprio) 
-{   
+{
 
     if (fprio->n == 0) 
     {
