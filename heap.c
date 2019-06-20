@@ -30,6 +30,7 @@ p_fp criar_filaprio(int tam)
  {
     p_fp fprio = malloc(sizeof(FP));        // aloca um ponteiro pra FP de tamanho (FP)
     fprio->v = malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Item[dado,chave] dentro do FP
+	fprio->v->chave = 0; //Inicializa a 1ra chave
     fprio->n = 0;                           // inicializa contador n
     fprio->tamanho = tam;                   //define o tamanho da fila
     return fprio;                           //retorna a fila
@@ -95,6 +96,7 @@ void muda_prioridade(p_fp fprio, int k, int valor)
 
 int verifica_cor(int cor, int k)
 {
+
     switch (cor)
     {
     case 1:
@@ -109,6 +111,7 @@ int verifica_cor(int cor, int k)
     default:
         break;
     }
+
     return k;
 }
 
@@ -120,9 +123,9 @@ void mostrar_k(int x, int y)
 void insere_fp(p_fp fprio, Paciente *paciente) 
 {   
     (fprio->v[fprio->n].chave)++;
-    fprio->v[fprio->n].chave = verifica_cor(fprio->v[fprio->n].cor,fprio->v[fprio->n].chave);     //verifica no item que cor a chave é
+    fprio->v[fprio->n].chave = verifica_cor(fprio->v[fprio->n].cor, fprio->v[fprio->n].chave);     //verifica no item que cor a chave é
     fprio->v[fprio->n] = *paciente;                                  //insere no final da fila   
-    fprio->n++;                                                     //incrementa o contador              
+    (fprio->n)++;                                                     //incrementa o contador              
     sobe_no_heap(fprio, fprio->n - 1);
     //mostrar_k((fprio->v[fprio->n]).chave,(fprio->v[fprio->n]).cor);
     
@@ -140,6 +143,7 @@ int remove_fp(p_fp fprio)
     troca(&(fprio->v[0]), &(fprio->v[fprio->n - 1]));
     fprio->n--;
     desce_no_heap(fprio, 0);
+	printf("\nCOR: %u\n\n", fprio->v->chave);
     return fprio->v->chave;
 }
 
@@ -174,11 +178,12 @@ void menu(p_fp fp){
     {
     case 1:
         printf("\nNome do Paciente: ");
-        scanf("%s",&fp->v[fp->n].chave);
+        scanf("%s",&fp->v[fp->n].nome);
+		fp->v[fp->n].chave = fp->n;
         printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
         printf("Opcao de Cor: ");
-        scanf("%d",&fp->v[fp->n].cor);
-        insere_fp(fp,fp->v[fp->n]);
+        scanf("%d", &fp->v[fp->n].chave);
+        insere_fp(fp, &fp->v[fp->n]);
         menu(fp);
         break;
     case 2:
