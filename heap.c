@@ -8,89 +8,106 @@
 #define F_DIR(i) (2*i+2)                    //Filho direito de i
 
 
-typedef struct 
+typedef struct
 {
-    char nome[20];                          //dado do item
+    char nome[20];                          //dado do Paciente
     int cor;
-    int chave;                              //chave do item
+    int chave;                              //chave do Paciente
 } Paciente;
 
 
 typedef struct
 {
-    Paciente *v;                                // ponteiro para Item[dado,chave]
-    int n, tamanho;                         // inteiros contador de Items(n) e o tamanho da estrutura alocada dinamicamente
-}FP;
+    Paciente *p;                            // ponteiro para Paciente[dado,chave]
+    int n, tamanho;                         // inteiros contador de Pacientes(n) e o tamanho da estrutura alocada dinamicamente
+}PQ;
 
-typedef FP *p_fp;                          // ponteiro pra FP{n,tamanho, *Item[dado,chave]}
+typedef PQ *P_PQ;                          // ponteiro pra PQ{n,tamanho, *Paciente[dado,chave]}
 
 
 
-p_fp criar_filaprio(int tam) 
+P_PQ criar_filaprio(int tam)
  {
-    p_fp fprio = malloc(sizeof(FP));            // aloca um ponteiro pra FP de tamanho (FP)
-    fprio->v = malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Item[dado,chave] dentro do FP
-	fprio->v->chave = 0;                        //Inicializa a 1ra chave
-    fprio->n = 0;                               // inicializa contador n
-    fprio->tamanho = tam;                       //define o tamanho da fila
-    return fprio;                               //retorna a fila
+    P_PQ p_pq = malloc(sizeof(PQ));            // aloca um ponteiro pra PQ de tamanho (PQ)
+    p_pq->p = malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
+	p_pq->p->chave = 0;                        // inicializa a primeira chave
+    p_pq->n = 0;                               // inicializa contador n
+    p_pq->tamanho = tam;                       // define o tamanho da fila
+    return p_pq;                               // retorna a fila
  }
 
-
-void troca(Paciente *x, Paciente *y)  // Faz a troca de dois ponteiros
+int irmao(int index)
 {
-    Paciente z = *x;
-    *x = *y;
-    *y = z;
-}
-
-
-void sobe_no_heap(p_fp fprio, int x) 
-{
-    if (x > 0 && fprio->v[PAI(x)].chave < fprio->v[x].chave) 
+    if(index % 2 == 0)
     {
-        troca(&(fprio->v[x]), &(fprio->v[PAI(x)]));
-        sobe_no_heap(fprio, PAI(x));
+        return index = F_ESQ(PAI(index));
+    }else
+    {
+        return index = F_DIR(PAI(index));
     }
+
 }
 
-void desce_no_heap(p_fp fprio, int x) 
+
+void troca(P_PQ p_pq, int index, int x)
+{
+    int aux;
+    aux = p_pq->p[index].chave;
+    p_pq->p[index].chave = p_pq->p[x].chave;
+    p_pq->p[x].chave = aux;
+}
+
+
+void sobe_no_heap(P_PQ p_pq, int x)
+{
+    int index;
+    index = PAI(x);
+    while (index >= 0)
+    {
+        if(p_pq->p[x].chave < p_pq->p[index].chave)
+        {
+            troca(p_pq, index, x);
+            x = index;
+            index = PAI(x);
+        }else if(p_pq->p[x].chave < p_pq->p[irmao(index)].chave)
+        {
+            troca(p_pq, irmao(index), x);
+            x = irmao(index);
+            index = PAI(x);
+        }
+
+    }
+
+}
+
+void desce_no_heap(P_PQ p_pq, int x)
 {
  int maior_filho;
-    if (F_ESQ(x) < fprio->n) {
+    if (F_ESQ(x) < p_pq->n) {
         maior_filho = F_ESQ(x);
-        if (F_DIR(x) < fprio->n && fprio->v[F_ESQ(x)].chave < fprio->v[F_DIR(x)].chave)
+        if (F_DIR(x) < p_pq->n && p_pq->p[F_ESQ(x)].chave < p_pq->p[F_DIR(x)].chave)
         {
             maior_filho = F_DIR(x);
         }
-        if (fprio->v[x].chave < fprio->v[maior_filho].chave) 
+        if (p_pq->p[x].chave < p_pq->p[maior_filho].chave)
         {
-            troca(&(fprio->v[x]), &(fprio->v[maior_filho]));
-            desce_no_heap(fprio, maior_filho);
+            //troca(&(p_pq->v[x]), &(p_pq->v[maior_filho]));
+            desce_no_heap(p_pq, maior_filho);
         }
     }
 }
 
-Paciente extrai_maximo(p_fp fprio) 
-{
-    Paciente paciente = fprio->v[0];
-    troca(&(fprio->v[0]), &(fprio->v[fprio->n - 1]));
-    fprio->n--;
-    desce_no_heap(fprio, 0);
-    return paciente;
-}
 
-
-void muda_prioridade(p_fp fprio, int k, int valor) 
+void muda_prioridade(P_PQ p_pq, int k, int valor)
 {
-    if (fprio->v[k].chave < valor) 
+    if (p_pq->p[k].chave < valor)
     {
-        fprio->v[k].chave = valor;
-        sobe_no_heap(fprio, k);
-    } else 
+        p_pq->p[k].chave = valor;
+        sobe_no_heap(p_pq, k);
+    } else
       {
-        fprio->v[k].chave = valor;
-        desce_no_heap(fprio, k);
+        p_pq->p[k].chave = valor;
+        desce_no_heap(p_pq, k);
       }
 }
 
@@ -100,14 +117,14 @@ int verifica_cor(int cor, int k)
     switch (cor)
     {
     case 1:
-        k = k+1500; 
+        k = k+1500;
         break;
     case 2:
-        k = k+1000; 
+        k = k+1000;
         break;
     case 3:
-        k = k+500; 
-        break;     
+        k = k+500;
+        break;
     default:
         break;
     }
@@ -120,55 +137,55 @@ void mostrar_k(int x, int y)
      printf("K:%d C:%d",x,y);
 }
 
-void insere_fp(p_fp fprio, Paciente paciente) 
-{   
-    (fprio->v[fprio->n].chave)++;
+void insere_fp(P_PQ p_pq, Paciente paciente)
+{
+    (p_pq->p[p_pq->n].chave)++;
     paciente.chave = verifica_cor(paciente.cor,
-                                            fprio->v[fprio->n].chave);  //verifica que cor a chave é
-    //fprio->v[fprio->n].chave += paciente.chave;
-    fprio->v[fprio->n] = paciente;                                      //insere no final da fila   
-    (fprio->n)++;                                                       //incrementa o contador              
-    sobe_no_heap(fprio, fprio->n - 1);
-    //mostrar_k((fprio->v[fprio->n]).chave,(fprio->v[fprio->n]).cor);
-    
+    p_pq->p[p_pq->n].chave);                                        //verifica que cor a chave é
+    p_pq->p[p_pq->n] = paciente;                                    //insere no final da fila
+    mostrar_k((p_pq->p[p_pq->n]).chave,(p_pq->p[p_pq->n]).cor);
+    (p_pq->n)++;
+    sobe_no_heap(p_pq, p_pq->n-1);
+
+
 }
 
-int remove_fp(p_fp fprio) 
+int remove_fp(P_PQ p_pq)
 {
 
-    if (fprio->n == 0) 
+    if (p_pq->n == 0)
     {
         perror("Fila esta vazia : ");
         return -1;
     }
 
-    troca(&(fprio->v[0]), &(fprio->v[fprio->n - 1]));
-    fprio->n--;
-    desce_no_heap(fprio, 0);
-	printf("\nCOR: %u\n\n", fprio->v->chave);
-    return fprio->v->chave;
+    //troca(&(p_pq->v[0]), &(p_pq->v[p_pq->n - 1]));
+    p_pq->n--;
+    //desce_no_heap(p_pq, 0);
+	printf("\nCOR: %u\n\n", p_pq->p->chave);
+    return p_pq->p->chave;
 }
 
 
-void mostra_fp(p_fp fprio)
+void mostra_fp(P_PQ p_pq)
 {
     printf("Fp =[ ");
-    for(int i=0;i<fprio->n;i++)
+    for(int i=0;i<p_pq->n;i++)
     {
-        printf("K:%d C:%d ",fprio->v[i].chave,fprio->v[i].cor);     
+        printf("K:%d C:%d ",p_pq->p[i].chave,p_pq->p[i].cor);
     }
     puts(" ]");
 }
 
 
-void free_memo_fp(p_fp fprio)
+void free_memo_fp(P_PQ p_pq)
 {
-    free(fprio->v);
-    free(fprio);
+    free(p_pq->p);
+    free(p_pq);
 }
 
 
-void menu(p_fp fp){
+void menu(P_PQ p_pq){
     Paciente paciente;
     paciente.chave = 0;
     int k;
@@ -183,21 +200,21 @@ void menu(p_fp fp){
     case 1:
         printf("\nNome do Paciente: ");
         scanf("%s",&paciente.nome);
-		fp->v[fp->n].chave = fp->n;
+		p_pq->p[p_pq->n].chave = p_pq->n;
         printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
         printf("Opcao de Cor: ");
         scanf("%d", &paciente.cor);
-        insere_fp(fp, paciente);
-        menu(fp);
+        insere_fp(p_pq, paciente);
+        menu(p_pq);
         break;
     case 2:
         puts("mostrar proximo da fila: ");
-        printf("%d \n",remove_fp(fp));
-        menu(fp);
+        printf("%d \n",remove_fp(p_pq));
+        menu(p_pq);
         break;
     case 3:
-        mostra_fp(fp);
-        menu(fp);
+        mostra_fp(p_pq);
+        menu(p_pq);
         break;
     case 4:
         break;
@@ -210,11 +227,11 @@ void menu(p_fp fp){
 
 int main ()
 {
-    
-    p_fp fp = criar_filaprio(10);
-    menu(fp);
+
+    P_PQ p_pq = criar_filaprio(10);
+    menu(p_pq);
    // Desaloca a fila de prioridade
-   free_memo_fp(fp);
+   free_memo_fp(p_pq);
 
 
 
