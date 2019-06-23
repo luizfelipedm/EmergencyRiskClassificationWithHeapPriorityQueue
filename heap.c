@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 #define PAI(i) ((i-1)/2)
 
 typedef struct
@@ -25,7 +26,7 @@ P_PQ criar_filaprio(int tam)
 
     P_PQ p_pq = malloc(sizeof(PQ));            // aloca um ponteiro pra PQ de tamanho (PQ)
     p_pq->p = malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
-	p_pq->p->chave = 0;                        // inicializa a primeira chave
+	p_pq->p->chave = -1;                        // inicializa a primeira chave
     p_pq->n = 0;                               // inicializa contador n
     p_pq->tamanho = tam;                       // define o tamanho da fila
     return p_pq;                               // retorna a fila
@@ -120,6 +121,7 @@ void mostra_fp(P_PQ p_pq, Paciente *pac)
 
     }
 }
+
  
 void menu(P_PQ p_pq, Paciente *pac, int *n){
     int k;
@@ -164,21 +166,6 @@ int main()
     int *n = &p_pq->n;
 
     menu(p_pq,pac,n);
-    /* 
-    for(int i=0; i < p_pq->tamanho; i++)
-    {
-        printf("\nNome do Paciente: ");
-        scanf("%s",pac[i].nome);
-        printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
-        printf("Opcao de Cor: ");
-        scanf("%d",&(pac[i].cor));
-        inserir_chave( pac, i, n, verifica_cor(pac[i].cor,i+1) );
-    }
-
-    */
-
-    
-
 
     
 
