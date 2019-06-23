@@ -25,8 +25,13 @@ P_PQ criar_filaprio(int tam)
  {
 
     P_PQ p_pq = malloc(sizeof(PQ));            // aloca um ponteiro pra PQ de tamanho (PQ)
+<<<<<<< HEAD
     p_pq->p = malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
 	p_pq->p->chave = -1;                        // inicializa a primeira chave
+=======
+    p_pq->p = (Paciente*) malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
+	p_pq->p->chave = 0;                        // inicializa a primeira chave
+>>>>>>> 8defd713940d9d07f43ec82025daeb6e87501be1
     p_pq->n = 0;                               // inicializa contador n
     p_pq->tamanho = tam;                       // define o tamanho da fila
     return p_pq;                               // retorna a fila
