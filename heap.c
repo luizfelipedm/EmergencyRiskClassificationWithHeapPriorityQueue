@@ -1,12 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
+#include <time.h>
 
-#define PAI(i) ((i-1)/2)		            //Pai de i er i-1 divido por 2
-#define F_ESQ(i) (2*i+1)                    //Filho esquerdo de i
-#define F_DIR(i) (2*i+2)                    //Filho direito de i
-
+#define PAI(i) ((i-1)/2)
 
 typedef struct
 {
@@ -22,12 +18,11 @@ typedef struct
     int n, tamanho;                         // inteiros contador de Pacientes(n) e o tamanho da estrutura alocada dinamicamente
 }PQ;
 
-typedef PQ *P_PQ;                          // ponteiro pra PQ{n,tamanho, *Paciente[dado,chave]}
-
-
+typedef PQ *P_PQ;
 
 P_PQ criar_filaprio(int tam)
  {
+
     P_PQ p_pq = malloc(sizeof(PQ));            // aloca um ponteiro pra PQ de tamanho (PQ)
     p_pq->p = malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
 	p_pq->p->chave = 0;                        // inicializa a primeira chave
@@ -36,79 +31,44 @@ P_PQ criar_filaprio(int tam)
     return p_pq;                               // retorna a fila
  }
 
-int irmao(int index)
+void max_heapify(Paciente *vet, int i, int f)
 {
-    if(index % 2 == 0)
+    int aux = vet[i].chave;
+    int j = (i * 2) + 1;
+    while( j <= f )
     {
-        return index = F_ESQ(PAI(index));
-    }else
-    {
-        return index = F_DIR(PAI(index));
-    }
-
-}
-
-
-void troca(P_PQ p_pq, int index, int x)
-{
-    int aux;
-    aux = p_pq->p[index].chave;
-    p_pq->p[index].chave = p_pq->p[x].chave;
-    p_pq->p[x].chave = aux;
-}
-
-
-void sobe_no_heap(P_PQ p_pq, int x)
-{
-    int index;
-    index = PAI(x);
-    while (index >= 0)
-    {
-        if(p_pq->p[x].chave < p_pq->p[index].chave)
+        if( j < f )
         {
-            troca(p_pq, index, x);
-            x = index;
-            index = PAI(x);
-        }else if(p_pq->p[x].chave < p_pq->p[irmao(index)].chave)
-        {
-            troca(p_pq, irmao(index), x);
-            x = irmao(index);
-            index = PAI(x);
+            if( vet[j].chave < vet[j + 1].chave )
+            {
+                j = j + 1;
+            }
         }
-
+        if( aux < vet[j].chave)
+        {
+            vet[i].chave = vet[j].chave;
+            i = j;
+            j = (2 * i) + 1;
+        }else
+            j = f + 1;
     }
-
+    vet[i].chave = aux;
 }
 
-void desce_no_heap(P_PQ p_pq, int x)
+void heapSort(Paciente *vet, int n)
 {
- int maior_filho;
-    if (F_ESQ(x) < p_pq->n) {
-        maior_filho = F_ESQ(x);
-        if (F_DIR(x) < p_pq->n && p_pq->p[F_ESQ(x)].chave < p_pq->p[F_DIR(x)].chave)
-        {
-            maior_filho = F_DIR(x);
-        }
-        if (p_pq->p[x].chave < p_pq->p[maior_filho].chave)
-        {
-            //troca(&(p_pq->v[x]), &(p_pq->v[maior_filho]));
-            desce_no_heap(p_pq, maior_filho);
-        }
-    }
-}
-
-
-void muda_prioridade(P_PQ p_pq, int k, int valor)
-{
-    if (p_pq->p[k].chave < valor)
+    int i, aux;
+    for( i = (n-1)/2; i >= 0; i--)
     {
-        p_pq->p[k].chave = valor;
-        sobe_no_heap(p_pq, k);
-    } else
-      {
-        p_pq->p[k].chave = valor;
-        desce_no_heap(p_pq, k);
-      }
+        max_heapify(vet, i, n-1);
+    }
+    for( i = n-1; i >= 1; i-- )
+    {
+        aux = vet[0].chave;
+        vet[0].chave = vet[i].chave;
+        vet[i].chave = aux;
+        max_heapify(vet, 0, i-1);
+    }
 }
 
 int verifica_cor(int cor, int k)
@@ -117,13 +77,13 @@ int verifica_cor(int cor, int k)
     switch (cor)
     {
     case 1:
-        k = k+1500;
+        k = k+800;
         break;
     case 2:
-        k = k+1000;
+        k = k+400;
         break;
     case 3:
-        k = k+500;
+        k = k+200;
         break;
     default:
         break;
@@ -132,51 +92,15 @@ int verifica_cor(int cor, int k)
     return k;
 }
 
-void mostrar_k(int x, int y)
+void inserir_chave(Paciente *vet,int index, int *n, int chave)
 {
-     printf("K:%d C:%d",x,y);
-}
-
-void insere_fp(P_PQ p_pq, Paciente paciente)
-{
-    (p_pq->p[p_pq->n].chave)++;
-    paciente.chave = verifica_cor(paciente.cor,
-    p_pq->p[p_pq->n].chave);                                        //verifica que cor a chave é
-    p_pq->p[p_pq->n] = paciente;                                    //insere no final da fila
-    mostrar_k((p_pq->p[p_pq->n]).chave,(p_pq->p[p_pq->n]).cor);
-    (p_pq->n)++;
-    sobe_no_heap(p_pq, p_pq->n-1);
-
+    
+    vet[*n].chave = chave;
+    (*n)++;
+    max_heapify(vet,index,*n);
+    heapSort(vet,*n);
 
 }
-
-int remove_fp(P_PQ p_pq)
-{
-
-    if (p_pq->n == 0)
-    {
-        perror("Fila esta vazia : ");
-        return -1;
-    }
-
-    //troca(&(p_pq->v[0]), &(p_pq->v[p_pq->n - 1]));
-    p_pq->n--;
-    //desce_no_heap(p_pq, 0);
-	printf("\nCOR: %u\n\n", p_pq->p->chave);
-    return p_pq->p->chave;
-}
-
-
-void mostra_fp(P_PQ p_pq)
-{
-    printf("Fp =[ ");
-    for(int i=0;i<p_pq->n;i++)
-    {
-        printf("K:%d C:%d ",p_pq->p[i].chave,p_pq->p[i].cor);
-    }
-    puts(" ]");
-}
-
 
 void free_memo_fp(P_PQ p_pq)
 {
@@ -184,7 +108,7 @@ void free_memo_fp(P_PQ p_pq)
     free(p_pq);
 }
 
-
+/* 
 void menu(P_PQ p_pq){
     Paciente paciente;
     paciente.chave = 0;
@@ -208,8 +132,8 @@ void menu(P_PQ p_pq){
         menu(p_pq);
         break;
     case 2:
-        puts("mostrar proximo da fila: ");
-        printf("%d \n",remove_fp(p_pq));
+       // puts("mostrar proximo da fila: ");
+        //printf("%d \n",remove_fp(p_pq));
         menu(p_pq);
         break;
     case 3:
@@ -222,19 +146,34 @@ void menu(P_PQ p_pq){
         break;
     }
 }
+*/
 
-
-
-int main ()
+int main()
 {
+    P_PQ p_pq = criar_filaprio(5);
+    Paciente *pac = p_pq->p;
+    int *n = &p_pq->n;
 
-    P_PQ p_pq = criar_filaprio(10);
-    menu(p_pq);
-   // Desaloca a fila de prioridade
-   free_memo_fp(p_pq);
+    for(int i=0; i < p_pq->tamanho; i++)
+    {
+        printf("Nome do paciente: ");
+        scanf("%s",pac[i].nome);
+        printf("Cor: ");
+        scanf("%d",&(pac[i].cor));
+        inserir_chave( pac, i, n, verifica_cor(pac[i].cor,i+1) );
+    }
+
+    printf("\n\nHeap Ordenada: \n");
 
 
+    for(int i=0; i < p_pq->tamanho; i++)
+    {
+        (i > 0) ?
+         printf("P[%d] index[%d]: (%d) \n", PAI(i),i,pac[i].chave)
+        :printf("      Raiz[%d]: (%d) \n", i,pac[i].chave);
 
-   return 0;
+    }
+
+    free(p_pq);
+    return 0;
 }
-
