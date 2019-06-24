@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+
 
 
 #define PAI(i) ((i-1)/2)
@@ -24,12 +24,10 @@ typedef PQ *P_PQ;
 P_PQ criar_filaprio(int tam)
  {
 
-    P_PQ p_pq = malloc(sizeof(PQ));            // aloca um ponteiro pra PQ de tamanho (PQ)
-    p_pq->p = malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
-	p_pq->p->chave = -1;                        // inicializa a primeira chave
-
-    p_pq->p = (Paciente*) malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
-	p_pq->p->chave = 0;                        // inicializa a primeira chave
+    P_PQ p_pq = (PQ*) malloc(sizeof(PQ));            // aloca um ponteiro pra PQ de tamanho (PQ)
+    p_pq->p = (Paciente*) 
+    malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
+	p_pq->p[0].chave = -1;                        // inicializa a primeira chave
     p_pq->n = 0;                               // inicializa contador n
     p_pq->tamanho = tam;                       // define o tamanho da fila
     return p_pq;                               // retorna a fila
@@ -100,9 +98,10 @@ void inserir_chave(Paciente *vet,int index, int *n, int chave)
 {
     
     vet[*n].chave = chave;
-    (*n)++;
+    printf("\n\nchave: %d\n",chave);
     max_heapify(vet,index,*n);
     heapSort(vet,*n);
+    (*n)++;
 
 }
 
@@ -116,7 +115,7 @@ void free_memo_fp(P_PQ p_pq)
 void mostra_fp(P_PQ p_pq, Paciente *pac)
 {
     printf("\n\nHeap Ordenada: \n");
-    for(int i=0; i < p_pq->tamanho; i++)
+    for(int i=0; i < p_pq->n; i++)
     {
         (i > 0) ?
          printf("P[%d] index[%d]: (%d) \n", PAI(i),i,pac[i].chave)
@@ -142,7 +141,7 @@ void menu(P_PQ p_pq, Paciente *pac, int *n){
         printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
         printf("Opcao de Cor: ");
         scanf("%d",&(pac[*n].cor));
-        inserir_chave( pac, *n, n, verifica_cor(pac[*n].cor,*n+1) );
+        inserir_chave( pac, *n, n, verifica_cor(pac[*n].cor,(*n)+1) );
         menu(p_pq, pac, n);
         break;
     case 2:
