@@ -108,10 +108,20 @@ void free_memo_fp(P_PQ p_pq)
     free(p_pq);
 }
 
-/* 
-void menu(P_PQ p_pq){
-    Paciente paciente;
-    paciente.chave = 0;
+
+void mostra_fp(P_PQ p_pq, Paciente *pac)
+{
+    printf("\n\nHeap Ordenada: \n");
+    for(int i=0; i < p_pq->tamanho; i++)
+    {
+        (i > 0) ?
+         printf("P[%d] index[%d]: (%d) \n", PAI(i),i,pac[i].chave)
+        :printf("      Raiz[%d]: (%d) \n", i,pac[i].chave);
+
+    }
+}
+ 
+void menu(P_PQ p_pq, Paciente *pac, int *n){
     int k;
     puts("\nMenu");
     puts("1- Cad Pacientes");
@@ -123,22 +133,21 @@ void menu(P_PQ p_pq){
     {
     case 1:
         printf("\nNome do Paciente: ");
-        scanf("%s",&paciente.nome);
-		p_pq->p[p_pq->n].chave = p_pq->n;
+        scanf("%s",pac[*n].nome);
         printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
         printf("Opcao de Cor: ");
-        scanf("%d", &paciente.cor);
-        insere_fp(p_pq, paciente);
-        menu(p_pq);
+        scanf("%d",&(pac[*n].cor));
+        inserir_chave( pac, *n, n, verifica_cor(pac[*n].cor,*n+1) );
+        menu(p_pq, pac, n);
         break;
     case 2:
        // puts("mostrar proximo da fila: ");
         //printf("%d \n",remove_fp(p_pq));
-        menu(p_pq);
+        menu(p_pq, pac, n);
         break;
     case 3:
-        mostra_fp(p_pq);
-        menu(p_pq);
+        mostra_fp(p_pq, pac);
+        menu(p_pq, pac, n);
         break;
     case 4:
         break;
@@ -146,7 +155,7 @@ void menu(P_PQ p_pq){
         break;
     }
 }
-*/
+
 
 int main()
 {
@@ -154,25 +163,24 @@ int main()
     Paciente *pac = p_pq->p;
     int *n = &p_pq->n;
 
+    menu(p_pq,pac,n);
+    /* 
     for(int i=0; i < p_pq->tamanho; i++)
     {
-        printf("Nome do paciente: ");
+        printf("\nNome do Paciente: ");
         scanf("%s",pac[i].nome);
-        printf("Cor: ");
+        printf("Cores de Atendimento: 1-Azul, 2-Verde, 3-Amarelo, 4-Laranja\n");
+        printf("Opcao de Cor: ");
         scanf("%d",&(pac[i].cor));
         inserir_chave( pac, i, n, verifica_cor(pac[i].cor,i+1) );
     }
 
-    printf("\n\nHeap Ordenada: \n");
+    */
+
+    
 
 
-    for(int i=0; i < p_pq->tamanho; i++)
-    {
-        (i > 0) ?
-         printf("P[%d] index[%d]: (%d) \n", PAI(i),i,pac[i].chave)
-        :printf("      Raiz[%d]: (%d) \n", i,pac[i].chave);
-
-    }
+    
 
     free(p_pq);
     return 0;
