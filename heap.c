@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+//#include <gtk/gtk.h>
 
 
 #define PAI(i) ((i-1)/2)
@@ -29,6 +29,14 @@ P_PQ criar_filaprio(int tam)
     malloc(tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
 	p_pq->p[0].chave = -1;                        // inicializa a primeira chave
     p_pq->n = 0;                               // inicializa contador n
+    p_pq->tamanho = tam;                       // define o tamanho da fila
+    return p_pq;                               // retorna a fila
+ }
+
+ P_PQ mod_tam_filaprio(P_PQ p_pq,int tam)
+ {
+    p_pq->p = (Paciente*) 
+    realloc(p_pq->p,tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
     p_pq->tamanho = tam;                       // define o tamanho da fila
     return p_pq;                               // retorna a fila
  }
@@ -64,13 +72,15 @@ void heapSort(Paciente *vet, int n)
     {
         max_heapify(vet, i, n-1);
     }
-    for( i = n-1; i >= 1; i-- )
+    for( i = n; i >= 1; i-- )
     {
         aux = vet[0].chave;
         vet[0].chave = vet[i].chave;
         vet[i].chave = aux;
         max_heapify(vet, 0, i-1);
     }
+    
+    
 }
 
 int verifica_cor(int cor, int k)
@@ -169,7 +179,6 @@ int main()
 
     menu(p_pq,pac,n);
 
-    
 
     free(p_pq);
     return 0;
