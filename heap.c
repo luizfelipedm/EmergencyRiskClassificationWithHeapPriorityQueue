@@ -33,13 +33,6 @@ P_PQ criar_filaprio(int tam)
     return p_pq;                               // retorna a fila
  }
 
- P_PQ mod_tam_filaprio(P_PQ p_pq,int tam)
- {
-    p_pq->p = (Paciente*) 
-    realloc(p_pq->p,tam * sizeof(Paciente));  // aloca um ponteiro para Paciente[dado,chave] dentro do PQ
-    p_pq->tamanho = tam;                       // define o tamanho da fila
-    return p_pq;                               // retorna a fila
- }
 
 void max_heapify(Paciente *vet, int i, int f)
 {
